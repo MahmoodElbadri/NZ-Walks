@@ -53,5 +53,70 @@ namespace NZ_Walks.api.Controllers
             };
             return Ok(regionResponse);
         }
+
+        [HttpPost]
+        public IActionResult AddRegion([FromBody] RegionAddRequest regionAddRequest)
+        {
+            if(ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
+            var region = new Region()
+            {
+                Code = regionAddRequest.Code,
+                Name = regionAddRequest.Name,
+                RegionImageUrl = regionAddRequest.RegionImageUrl
+            };
+            _db.Regions.Add(region);
+            _db.SaveChanges();
+            var regionResponse = new RegionResponse()
+            {
+                Id = region.Id,
+                Code = region.Code,
+                Name = region.Name,
+                RegionImageUrl = region.RegionImageUrl
+            };
+            return CreatedAtAction(nameof(GetRegion), new { id = region.Id }, regionResponse);
+        }
+
+        [HttpPut("{id:guid}")]
+        public IActionResult UpdateRegion([FromRoute] Guid id, [FromBody] RegionUpdateRequest regionUpdateRequest)
+        {
+            if(ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
+            var region = _db.Regions.Find(id);
+            if(region == null)
+            {
+                return NotFound();
+            }
+            region.RegionImageUrl = regionUpdateRequest.RegionImageUrl;
+            region.Code = regionUpdateRequest.Code;
+            region.Name = regionUpdateRequest.Name;
+            _db.SaveChanges();
+            var regionResponse = new RegionResponse()
+            {
+                Id = region.Id,
+                Code = region.Code,
+                Name = region.Name,
+                RegionImageUrl = region.RegionImageUrl
+            };
+            return Ok(regionResponse);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public IActionResult DeleteRegion([FromRoute] Guid id)
+        {
+            var region = _db.Regions.FirstOrDefault(tmp=>tmp.Id == id);
+            if (region == null)
+            {
+                return NotFound();
+            }
+            _db.Regions.Remove(region);
+            _db.SaveChanges();
+            //return NoContent();
+            return NoContent();
+        }
     }
 }
