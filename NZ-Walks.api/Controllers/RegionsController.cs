@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NZ_Walks.api.Data;
@@ -15,18 +16,21 @@ namespace NZ_Walks.api.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly IRegionRepository _repo;
+        private readonly IMapper _mapper;
 
-        public RegionsController(ApplicationDbContext db, IRegionRepository repo)
+        public RegionsController(ApplicationDbContext db, IRegionRepository repo, IMapper _mapper)
         {
             this._db = db;
             _repo = repo;
+            this._mapper = _mapper;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var regions = await //_db.Regions.ToListAsync();
             _repo.GetAllRegionsAsync();
-            var regionResponses = new List<RegionResponse>();
+            /*var regionResponses = new List<RegionResponse>();
             foreach (var region in regions)
             {
                 regionResponses.Add(new RegionResponse()
@@ -36,7 +40,9 @@ namespace NZ_Walks.api.Controllers
                     Name = region.Name,
                     RegionImageUrl = region.RegionImageUrl
                 });
-            }
+            }*/
+            
+            var regionResponses = _mapper.Map<List<RegionResponse>>(regions);
             return Ok(regionResponses);
         }
 
@@ -51,13 +57,15 @@ namespace NZ_Walks.api.Controllers
             {
                 return NotFound();
             }
-            var regionResponse = new RegionResponse()
-            {
-                Id = region.Id,
-                Code = region.Code,
-                Name = region.Name,
-                RegionImageUrl = region.RegionImageUrl
-            };
+           /* //var regionResponse = new RegionResponse()
+            //{
+            //    Id = region.Id,
+            //    Code = region.Code,
+            //    Name = region.Name,
+            //    RegionImageUrl = region.RegionImageUrl
+            //};*/
+           
+            var regionResponse = _mapper.Map<RegionResponse>(region);
             return Ok(regionResponse);
         }
 
@@ -68,21 +76,26 @@ namespace NZ_Walks.api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var region = new Region()
+          
+            /*var region = new Region()
             {
                 Code = regionAddRequest.Code,
                 Name = regionAddRequest.Name,
                 RegionImageUrl = regionAddRequest.RegionImageUrl
-            };
+            };*/
+
+            var region = _mapper.Map<Region>(regionAddRequest); 
             var createdRegion = await // _db.Regions.AddAsync(region);
                  _repo.CreateRegionAsync(region);
-            var regionResponse = new RegionResponse()
+           /* var regionResponse = new RegionResponse()
             {
                 Id = createdRegion.Id,
                 Code = createdRegion.Code,
                 Name = createdRegion.Name,
                 RegionImageUrl = createdRegion.RegionImageUrl
-            };
+            };*/
+
+            var regionResponse = _mapper.Map<RegionResponse>(createdRegion);
             return CreatedAtAction(nameof(GetRegion), new { id = region.Id }, regionResponse);
         }
 
@@ -108,13 +121,15 @@ namespace NZ_Walks.api.Controllers
 
             var updatedRegion = await _repo.UpdateRegionAsync(id, region); 
 
-            var regionResponse = new RegionResponse
+            /*var regionResponse = new RegionResponse
             {
                 Id = updatedRegion!.Id,
                 Code = updatedRegion.Code,
                 Name = updatedRegion.Name,
                 RegionImageUrl = updatedRegion.RegionImageUrl
-            };
+            };*/
+
+            var regionResponse = _mapper.Map<RegionResponse>(updatedRegion);
 
             return Ok(regionResponse);
         }
