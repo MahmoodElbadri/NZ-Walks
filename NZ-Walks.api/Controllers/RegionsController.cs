@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using NZ_Walks.api.Data;
 using NZ_Walks.api.IRepositories;
 using NZ_Walks.api.Models.Domain;
-using NZ_Walks.api.Models.DTO;
+using NZ_Walks.api.Models.DTO.RegionDTOs;
 using NZ_Walks.api.Repositories;
 
 namespace NZ_Walks.api.Controllers
