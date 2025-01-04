@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NZ_Walks.api.CustomActionFilter;
 using NZ_Walks.api.Data;
 using NZ_Walks.api.IRepositories;
 using NZ_Walks.api.Models.Domain;
@@ -41,7 +42,7 @@ namespace NZ_Walks.api.Controllers
                     RegionImageUrl = region.RegionImageUrl
                 });
             }*/
-            
+
             var regionResponses = _mapper.Map<List<RegionResponse>>(regions);
             return Ok(regionResponses);
         }
@@ -57,43 +58,39 @@ namespace NZ_Walks.api.Controllers
             {
                 return NotFound();
             }
-           /* //var regionResponse = new RegionResponse()
-            //{
-            //    Id = region.Id,
-            //    Code = region.Code,
-            //    Name = region.Name,
-            //    RegionImageUrl = region.RegionImageUrl
-            //};*/
-           
+            /* //var regionResponse = new RegionResponse()
+             //{
+             //    Id = region.Id,
+             //    Code = region.Code,
+             //    Name = region.Name,
+             //    RegionImageUrl = region.RegionImageUrl
+             //};*/
+
             var regionResponse = _mapper.Map<RegionResponse>(region);
             return Ok(regionResponse);
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> AddRegion([FromBody] RegionAddRequest regionAddRequest)
         {
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest(ModelState);
-            }
-          
             /*var region = new Region()
-            {
-                Code = regionAddRequest.Code,
-                Name = regionAddRequest.Name,
-                RegionImageUrl = regionAddRequest.RegionImageUrl
-            };*/
+{
+Code = regionAddRequest.Code,
+Name = regionAddRequest.Name,
+RegionImageUrl = regionAddRequest.RegionImageUrl
+};*/
 
-            var region = _mapper.Map<Region>(regionAddRequest); 
+            var region = _mapper.Map<Region>(regionAddRequest);
             var createdRegion = await // _db.Regions.AddAsync(region);
                  _repo.CreateRegionAsync(region);
-           /* var regionResponse = new RegionResponse()
-            {
-                Id = createdRegion.Id,
-                Code = createdRegion.Code,
-                Name = createdRegion.Name,
-                RegionImageUrl = createdRegion.RegionImageUrl
-            };*/
+            /* var regionResponse = new RegionResponse()
+             {
+                 Id = createdRegion.Id,
+                 Code = createdRegion.Code,
+                 Name = createdRegion.Name,
+                 RegionImageUrl = createdRegion.RegionImageUrl
+             };*/
 
             var regionResponse = _mapper.Map<RegionResponse>(createdRegion);
             return CreatedAtAction(nameof(GetRegion), new { id = region.Id }, regionResponse);
@@ -103,23 +100,23 @@ namespace NZ_Walks.api.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] RegionUpdateRequest regionUpdateRequest)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var region = await _repo.GetRegionAsync(id); 
+            var region = await _repo.GetRegionAsync(id);
 
             if (region == null)
             {
                 return NotFound();
             }
 
-            region.Code = regionUpdateRequest.Code; 
+            region.Code = regionUpdateRequest.Code;
             region.Name = regionUpdateRequest.Name;
             region.RegionImageUrl = regionUpdateRequest.RegionImageUrl;
 
-            var updatedRegion = await _repo.UpdateRegionAsync(id, region); 
+            var updatedRegion = await _repo.UpdateRegionAsync(id, region);
 
             /*var regionResponse = new RegionResponse
             {

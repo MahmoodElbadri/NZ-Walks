@@ -22,7 +22,7 @@ namespace NZ_Walks.api.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var existingWalk = _db.Walks.FirstOrDefault(tmp=>tmp.Id == id);
+            var existingWalk = _db.Walks.FirstOrDefault(tmp => tmp.Id == id);
             if (existingWalk == null)
             {
                 throw new KeyNotFoundException($"Walk with id {id} not found.");
@@ -31,21 +31,57 @@ namespace NZ_Walks.api.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public async Task<List<Walk>> GetAllAsync()
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? isAscending = null)
         {
-            return await _db.Walks.Include(tmp=>tmp.Difficulty).Include(tmp=>tmp.Region).ToListAsync();
+            var walks = _db.Walks.Include(tmp => tmp.Difficulty).Include(tmp => tmp.Region).AsQueryable();
+
+            // Apply filtering
+            if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
+            {
+                filterQuery = filterQuery.ToLower(); // Convert to lowercase once for efficiency
+
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Use EF.Functions.Like for case-insensitive search
+                    walks = walks.Where(tmp => EF.Functions.Like(tmp.Name.ToLower(), $"%{filterQuery}%"));
+                }
+                else if (filterOn.Equals("Description", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Similarly for description
+                    walks = walks.Where(tmp => EF.Functions.Like(tmp.Description.ToLower(), $"%{filterQuery}%"));
+                }
+            }
+
+            // Apply sorting
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending.GetValueOrDefault(true)
+                        ? walks.OrderBy(tmp => tmp.Name)
+                        : walks.OrderByDescending(tmp => tmp.Name);
+                }
+                else if (sortBy.Equals("Length", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAscending.GetValueOrDefault(true)
+                        ? walks.OrderBy(tmp => tmp.LengthInKm)
+                        : walks.OrderByDescending(tmp => tmp.LengthInKm);
+                }
+            }
+
+            return await walks.ToListAsync();
         }
 
         public async Task<Walk?> GetWalkAsync(Guid id)
         {
-           var walk = await _db.Walks.Where(tmp => tmp.Id == id).FirstOrDefaultAsync();
+            var walk = await _db.Walks.Where(tmp => tmp.Id == id).FirstOrDefaultAsync();
             return walk;
         }
 
         public async Task<Walk?> UpdateAsync(Guid id, Walk walk)
         {
             var existingWalk = await _db.Walks.Where(tmp => tmp.Id == id).FirstOrDefaultAsync();
-            if(existingWalk == null)
+            if (existingWalk == null)
             {
                 return null;
             }

@@ -12,7 +12,7 @@ using NZ_Walks.api.Data;
 namespace NZ_Walks.api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250104100400_initial")]
+    [Migration("20250104135044_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -41,17 +41,17 @@ namespace NZ_Walks.api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e0721d83-6231-42b3-8562-aa98b226f70a"),
+                            Id = new Guid("976203ba-eba7-4866-9ad7-560196f45a38"),
                             Name = "Easy"
                         },
                         new
                         {
-                            Id = new Guid("68e1bb76-812d-4012-bdc7-8e2d61969fc3"),
+                            Id = new Guid("ce91ad0c-2eeb-4b58-af26-f5ac6d20bb9e"),
                             Name = "Medium"
                         },
                         new
                         {
-                            Id = new Guid("6dfe872f-cf55-451f-8171-87425cecb785"),
+                            Id = new Guid("ba5622e0-b234-4936-a1fc-a25121cb7d04"),
                             Name = "Hard"
                         });
                 });
@@ -78,56 +78,56 @@ namespace NZ_Walks.api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("896ce19e-2c5b-4a7d-a436-bc4713f93687"),
+                            Id = new Guid("a5ffca80-706b-410e-bb1f-2cd810a50fff"),
                             Code = "NZ-NZL",
                             Name = "New Zealand",
                             RegionImageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                         },
                         new
                         {
-                            Id = new Guid("602b4e05-7ba3-4755-90e1-137b96bdc4ac"),
+                            Id = new Guid("f019415e-286b-4848-8c84-6300d5048d3e"),
                             Code = "AKL",
                             Name = "Auckland",
                             RegionImageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                         },
                         new
                         {
-                            Id = new Guid("f2659227-eab7-4adf-b025-9b1a58d31ac1"),
+                            Id = new Guid("bf3764e1-7752-415c-a2db-6e10d928cf19"),
                             Code = "WGN",
                             Name = "Wellington",
                             RegionImageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                         },
                         new
                         {
-                            Id = new Guid("eb79ab91-02ba-43ed-a79c-761fbc69c505"),
+                            Id = new Guid("fffd1132-ab40-4474-9704-217330bb98cc"),
                             Code = "MEL",
                             Name = "Melbourne",
                             RegionImageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                         },
                         new
                         {
-                            Id = new Guid("9f36ffb0-c6d7-4d4f-b081-d608c25473f4"),
+                            Id = new Guid("c28a72ae-db27-445f-9e04-5c1c1919d74c"),
                             Code = "SDY",
                             Name = "Sydney",
                             RegionImageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                         },
                         new
                         {
-                            Id = new Guid("4450c04c-0da1-406b-b92e-cbdfb6ebee10"),
+                            Id = new Guid("200fd4c0-7bf7-4b4d-8b36-62a8ee79dd4e"),
                             Code = "NSW",
                             Name = "New South Wales",
                             RegionImageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                         },
                         new
                         {
-                            Id = new Guid("98a6a79b-8ea3-47ba-9dd5-ef53b6f80522"),
+                            Id = new Guid("78e1038b-5919-40a6-935d-a378d9ed53a9"),
                             Code = "VIC",
                             Name = "Victoria",
                             RegionImageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
                         },
                         new
                         {
-                            Id = new Guid("b6a52887-2138-4ead-8b7f-04fd70ccde75"),
+                            Id = new Guid("3607ddac-a200-4d89-bb92-c29d7de42fe7"),
                             Code = "QLD",
                             Name = "Queensland",
                             RegionImageUrl = "https://images.unsplash.com/photo-1503376780353-7e6692767b90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"

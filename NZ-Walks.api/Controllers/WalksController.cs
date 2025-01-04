@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NZ_Walks.api.CustomActionFilter;
 using NZ_Walks.api.IRepositories;
 using NZ_Walks.api.Models.Domain;
 using NZ_Walks.api.Models.DTO.WalkDTOs;
@@ -21,12 +22,9 @@ namespace NZ_Walks.api.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] WalkAddRequest walkAddRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             Walk walk = _mapper.Map<Walk>(walkAddRequest);
             var createdWalk = await _repo.CreateAsync(walk);
             var walkResponse = _mapper.Map<WalkResponse>(createdWalk);
@@ -36,12 +34,12 @@ namespace NZ_Walks.api.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetWalk([FromRoute] Guid id)
         {
-            if(id == Guid.Empty)
+            if (id == Guid.Empty)
             {
                 return BadRequest("Invalid Walk ID.");
             }
             var walk = await _repo.GetWalkAsync(id);
-            if(walk == null)
+            if (walk == null)
             {
                 return NotFound();
             }
@@ -50,19 +48,20 @@ namespace NZ_Walks.api.Controllers
         }
 
         [HttpGet]
-        public async Task <IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? asc)
         {
-            var walks = await _repo.GetAllAsync();
+            var walks = await _repo.GetAllAsync(filterOn, filterQuery, sortBy, asc ?? true);
             var walkResponses = _mapper.Map<List<WalkResponse>>(walks);
             return Ok(walkResponses);
         }
 
         [HttpPut("{id:guid}")]
+        [ValidateModel]
         public async Task<IActionResult> UpdateWalk([FromRoute] Guid id, [FromBody] WalkUpdateRequest walkUpdateRequest)
         {
             var walk = _mapper.Map<Walk>(walkUpdateRequest);
             var updatedWalk = await _repo.UpdateAsync(id, walk);
-            if(updatedWalk == null)
+            if (updatedWalk == null)
             {
                 return NotFound();
             }
