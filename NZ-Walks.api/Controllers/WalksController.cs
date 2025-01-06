@@ -47,10 +47,13 @@ namespace NZ_Walks.api.Controllers
             return Ok(walkResponse);
         }
 
+
+        //localhost:5000/api/walks/?filterOn=Name&filterQuery=Walk&sortBy=Name&asc=false&page=1&pageSize=10
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? asc)
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
+            [FromQuery] string? sortBy, [FromQuery] bool? asc, [FromQuery] int  page = 1, [FromQuery] int pageSize =1000)
         {
-            var walks = await _repo.GetAllAsync(filterOn, filterQuery, sortBy, asc ?? true);
+            var walks = await _repo.GetAllAsync(filterOn, filterQuery, sortBy, asc ?? true,page, pageSize);
             var walkResponses = _mapper.Map<List<WalkResponse>>(walks);
             return Ok(walkResponses);
         }
