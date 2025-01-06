@@ -5,6 +5,9 @@ using NZ_Walks.api.IRepositories;
 using NZ_Walks.api.Mappings;
 using NZ_Walks.api.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 namespace NZ_Walks.api
 {
     public class Program
@@ -30,9 +33,29 @@ namespace NZ_Walks.api
                             errorNumbersToAdd: null);
                     });
             });
+
+            builder.Services.AddDbContext<ApplicationAuthDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("AuthConnection"));
+            });
+
             builder.Services.AddScoped<IRegionRepository, RegionRepository>();
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
             builder.Services.AddScoped<IWalkRepository, WalkRepository>();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                });
 
             var app = builder.Build();
 
@@ -44,6 +67,8 @@ namespace NZ_Walks.api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
