@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using FluentValidation.AspNetCore;
 using FluentValidation;
+using NZ_Walks.api.CustomActionFilter;
 namespace NZ_Walks.api
 {
     public class Program
@@ -21,7 +22,10 @@ namespace NZ_Walks.api
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<ValidateModelAttribute>();
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
