@@ -8,6 +8,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 namespace NZ_Walks.api
 {
     public class Program
@@ -34,6 +37,9 @@ namespace NZ_Walks.api
                     });
             });
 
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
             builder.Services.AddDbContext<ApplicationAuthDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AuthConnection"));
@@ -42,6 +48,22 @@ namespace NZ_Walks.api
             builder.Services.AddScoped<IRegionRepository, RegionRepository>();
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
             builder.Services.AddScoped<IWalkRepository, WalkRepository>();
+
+            builder.Services.AddIdentityCore<IdentityUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationAuthDbContext>()
+                .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Badri")
+                .AddDefaultTokenProviders();
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequiredLength = 6;
+            });
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
