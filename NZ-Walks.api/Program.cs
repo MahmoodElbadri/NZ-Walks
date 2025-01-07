@@ -13,6 +13,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using NZ_Walks.api.CustomActionFilter;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.FileProviders;
 namespace NZ_Walks.api
 {
     public class Program
@@ -27,6 +28,7 @@ namespace NZ_Walks.api
             {
                 options.Filters.Add<ValidateModelAttribute>();
             });
+            builder.Services.AddHttpContextAccessor();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
@@ -81,6 +83,7 @@ namespace NZ_Walks.api
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
             builder.Services.AddScoped<IWalkRepository, WalkRepository>();
             builder.Services.AddScoped<ITokenRepository,TokenRepository>();
+            builder.Services.AddScoped<IImageRepository,ImageRepository>();
 
             builder.Services.AddIdentityCore<IdentityUser>()
                 .AddRoles<IdentityRole>()
@@ -126,6 +129,12 @@ namespace NZ_Walks.api
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
+            });
 
 
             app.MapControllers();
