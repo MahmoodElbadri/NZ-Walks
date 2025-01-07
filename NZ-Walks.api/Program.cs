@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using NZ_Walks.api.CustomActionFilter;
+using Microsoft.OpenApi.Models;
 namespace NZ_Walks.api
 {
     public class Program
@@ -28,7 +29,34 @@ namespace NZ_Walks.api
             });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo() { Title = "NZ_Walks.api", Version = "v1" });
+                options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = JwtBearerDefaults.AuthenticationScheme,
+                            },
+                            Scheme = "oauth2",
+                            Name = JwtBearerDefaults.AuthenticationScheme,
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string> { }
+                    },
+            });
+            });
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -52,6 +80,7 @@ namespace NZ_Walks.api
             builder.Services.AddScoped<IRegionRepository, RegionRepository>();
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
             builder.Services.AddScoped<IWalkRepository, WalkRepository>();
+            builder.Services.AddScoped<ITokenRepository,TokenRepository>();
 
             builder.Services.AddIdentityCore<IdentityUser>()
                 .AddRoles<IdentityRole>()

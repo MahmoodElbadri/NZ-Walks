@@ -14,7 +14,7 @@ namespace NZ_Walks.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class RegionsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -29,6 +29,7 @@ namespace NZ_Walks.api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetAll()
         {
             var regions = await //_db.Regions.ToListAsync();
@@ -50,6 +51,7 @@ namespace NZ_Walks.api.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetRegion([FromRoute] Guid id)
         {
             var region = //_db.Regions.Find(id);
@@ -74,6 +76,7 @@ namespace NZ_Walks.api.Controllers
 
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddRegion([FromBody] RegionAddRequest regionAddRequest)
         {
             /*var region = new Region()
@@ -100,6 +103,8 @@ RegionImageUrl = regionAddRequest.RegionImageUrl
 
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin")]
+        [ValidateModel]
         public async Task<IActionResult> UpdateRegion([FromRoute] Guid id, [FromBody] RegionUpdateRequest regionUpdateRequest)
         {
             if (!ModelState.IsValid)
@@ -134,6 +139,7 @@ RegionImageUrl = regionAddRequest.RegionImageUrl
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRegion([FromRoute] Guid id)
         {
             var region = await //_db.Regions.FirstOrDefaultAsync(tmp => tmp.Id == id);
