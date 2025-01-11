@@ -14,6 +14,7 @@ using FluentValidation;
 using NZ_Walks.api.CustomActionFilter;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.FileProviders;
+using Serilog;
 namespace NZ_Walks.api
 {
     public class Program
@@ -21,6 +22,16 @@ namespace NZ_Walks.api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            var logger = new LoggerConfiguration()
+              .WriteTo.Console()
+              .WriteTo.File("Logs/nzWalks_Logs.txt", rollingInterval: RollingInterval.Day)
+                .MinimumLevel.Information()
+                .CreateLogger();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
+
 
             // Add services to the container.
 
@@ -82,8 +93,8 @@ namespace NZ_Walks.api
             builder.Services.AddScoped<IRegionRepository, RegionRepository>();
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
             builder.Services.AddScoped<IWalkRepository, WalkRepository>();
-            builder.Services.AddScoped<ITokenRepository,TokenRepository>();
-            builder.Services.AddScoped<IImageRepository,ImageRepository>();
+            builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+            builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
             builder.Services.AddIdentityCore<IdentityUser>()
                 .AddRoles<IdentityRole>()
