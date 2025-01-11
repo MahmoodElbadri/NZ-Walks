@@ -15,6 +15,8 @@ using NZ_Walks.api.CustomActionFilter;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
+using Microsoft.AspNetCore.Diagnostics;
+using NZ_Walks.api.Middlewares;
 namespace NZ_Walks.api
 {
     public class Program
@@ -127,6 +129,8 @@ namespace NZ_Walks.api
                 });
 
             var app = builder.Build();
+
+            app.UseMiddleware<ExceptionHandleMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
