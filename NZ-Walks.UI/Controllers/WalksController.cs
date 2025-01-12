@@ -6,30 +6,27 @@ using System.Text.Json;
 
 namespace NZ_Walks.UI.Controllers
 {
-    public class RegionsController : Controller
+    public class WalksController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ILogger<RegionsController> _logger;
+        private readonly ILogger<WalksController> _logger;
 
-        public RegionsController(IHttpClientFactory httpClientFactory,ILogger<RegionsController> logger)
+        public WalksController(IHttpClientFactory httpClientFactory, ILogger<WalksController> logger)
         {
             this._httpClientFactory = httpClientFactory;
             this._logger = logger;
         }
 
-        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            List<RegionDTO> response = new List<RegionDTO>();
+            var response = new List<WalksDTO>();
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var httpResponseMessage = await client.GetAsync("http://localhost:5239/api/Regions");
-
-                // Check for successful status codes
+                var httpResponseMessage = await client.GetAsync("http://localhost:5239/api/Walks");
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
-                    response.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<RegionDTO>>());
+                    response.AddRange(await httpResponseMessage.Content.ReadFromJsonAsync<IEnumerable<WalksDTO>>());
                     return View(response);
                 }
                 else
@@ -52,31 +49,6 @@ namespace NZ_Walks.UI.Controllers
                 return StatusCode(500, "An unexpected error occurred. Our team has been notified.");
             }
         }
-
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(AddRegionVM model)
-        {
-            var client = _httpClientFactory.CreateClient();
-            var httpRequestMessage = new HttpRequestMessage()
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("http://localhost:5239/api/Regions"),
-                Content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json")
-            };
-            var response = await client.SendAsync(httpRequestMessage);
-            response.EnsureSuccessStatusCode();
-            var responseContent = await response.Content.ReadFromJsonAsync<RegionDTO>();
-            if (responseContent is not null)
-            {
-                return RedirectToAction("Index", "Regions");
-            }
-            return View();
-        }
+        
     }
 }
