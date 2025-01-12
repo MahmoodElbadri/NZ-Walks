@@ -128,6 +128,8 @@ namespace NZ_Walks.api
                     };
                 });
 
+            builder.Services.AddHttpClient();
+
             var app = builder.Build();
 
             app.UseMiddleware<ExceptionHandleMiddleware>();
