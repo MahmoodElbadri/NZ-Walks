@@ -1,0 +1,29 @@
+﻿@model IEnumerable<WalksDTO>
+@{
+    ViewData["Title"] = "Walks";
+}
+
+<h1>Walks</h1>
+<table class="table table-bordered table-striped">
+<tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Length in KM</th>
+        <th>Walk Image URL</th>
+        <th>Difficulty Id</th>
+        <th>Region Id</th>
+    </tr>
+    @foreach (var walk in Model)
+    {
+        <tr>
+            <td>@walk.Id</td>
+            <td>@walk.Name</td>
+            <td>@walk.Description</td>
+            <td>@walk.LengthInKm</td>
+            <td>@walk.WalkImageUrl</td>
+            <td>@walk.DifficultyId</td>
+            <td>@walk.RegionId</td>
+        </tr>
+    }
+    </table>
