@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NZ_Walks.UI.Models.DTOs;
+using NZ_Walks.UI.Models.ViewModels;
+using System.Text;
+using System.Text.Json;
 
 namespace NZ_Walks.UI.Controllers
 {
@@ -14,7 +17,7 @@ namespace NZ_Walks.UI.Controllers
             this._logger = logger;
         }
 
-        public async Task <IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             var response = new List<WalksDTO>();
             try
@@ -45,7 +48,7 @@ namespace NZ_Walks.UI.Controllers
                 // Return a generic error message to the user
                 return StatusCode(500, "An unexpected error occurred. Our team has been notified.");
             }
-            return View();
         }
+        
     }
 }

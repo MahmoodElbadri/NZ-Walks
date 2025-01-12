@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NZ_Walks.UI.Models.DTOs;
+using NZ_Walks.UI.Models.ViewModels;
+using System.Text;
+using System.Text.Json;
 
 namespace NZ_Walks.UI.Controllers
 {
@@ -48,6 +51,32 @@ namespace NZ_Walks.UI.Controllers
                 // Return a generic error message to the user
                 return StatusCode(500, "An unexpected error occurred. Our team has been notified.");
             }
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(AddRegionVM model)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("http://localhost:5239/api/Regions"),
+                Content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json")
+            };
+            var response = await client.SendAsync(httpRequestMessage);
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadFromJsonAsync<RegionDTO>();
+            if (responseContent is not null)
+            {
+                return RedirectToAction("Index", "Regions");
+            }
+            return View();
         }
     }
 }
