@@ -78,5 +78,34 @@ namespace NZ_Walks.UI.Controllers
             }
             return View();
         }
+
+        [HttpGet]
+        public IActionResult Edit()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>Edit(Guid Id)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var response = await client.GetFromJsonAsync<RegionDTO>($"http://localhost:5239/api/Regions/{Id.ToString()}");
+                if (response is not null)
+                {
+                    return View(response);
+                }
+                return View();
+            }
+            catch(Exception ex)
+            {
+                // Log the exception for debugging
+                _logger.LogError(ex, "An unexpected error occurred while calling the API");
+
+                // Return a generic error message to the user
+                return StatusCode(500, "An unexpected error occurred. Our team has been notified.");
+            }
+        }
     }
 }
